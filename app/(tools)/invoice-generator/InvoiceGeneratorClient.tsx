@@ -12,6 +12,7 @@ import {
   emptyInvoice,
   exampleInvoice,
   nextInvoiceNumber,
+  placeholderInvoice,
   uid,
   type Invoice,
   type SenderProfile,
@@ -23,6 +24,7 @@ import { SavedInvoicesPanel } from "./components/SavedInvoicesPanel";
 
 const INVOICES_KEY = "cc-invoices";
 const SENDER_KEY = "cc-invoice-sender";
+const PLACEHOLDER_INVOICE = placeholderInvoice();
 
 export function InvoiceGeneratorClient() {
   const [invoices, setInvoices, , invoicesError] = useLocalStorage<Invoice[]>(INVOICES_KEY, []);
@@ -152,20 +154,17 @@ export function InvoiceGeneratorClient() {
     [current, invoices, sender]
   );
 
-  if (!current) {
-    return (
-      <section className="mx-auto max-w-7xl w-full px-4 sm:px-6 pb-8">
-        <div className="card p-10 text-center text-[var(--fg-muted)] text-[13px]">Loading…</div>
-      </section>
-    );
-  }
-
-  const isSaved = invoices.some((i) => i.id === current.id);
+  // Until the working invoice is seeded after mount, render the real layout
+  // with a placeholder so the page doesn't jump when it arrives (CLS), and
+  // make it inert so nothing can be typed into the placeholder.
+  const ready = current !== null;
+  const invoice = current ?? PLACEHOLDER_INVOICE;
+  const isSaved = invoices.some((i) => i.id === invoice.id);
 
   return (
     <>
       {/* Toolbar */}
-      <section className="mx-auto max-w-7xl w-full px-4 sm:px-6 pb-5">
+      <section className="mx-auto max-w-7xl w-full px-4 sm:px-6 pb-5" inert={!ready} aria-busy={!ready}>
         <div className="card flex flex-wrap items-center justify-between gap-2 px-3 py-2.5">
           <div className="flex items-center gap-2 flex-wrap">
             <button className="btn" onClick={startNew}>
@@ -180,7 +179,7 @@ export function InvoiceGeneratorClient() {
               <Save className="w-3.5 h-3.5" />
               <span>{isSaved ? "Update" : "Save"}</span>
             </button>
-            <button className="btn" onClick={() => duplicateFrom(current)}>
+            <button className="btn" onClick={() => duplicateFrom(invoice)}>
               <Copy className="w-3.5 h-3.5" />
               <span>Duplicate</span>
             </button>
@@ -197,14 +196,14 @@ export function InvoiceGeneratorClient() {
       </section>
 
       {/* Editor + live preview */}
-      <section className="mx-auto max-w-7xl w-full px-4 sm:px-6 pb-6">
+      <section className="mx-auto max-w-7xl w-full px-4 sm:px-6 pb-6" inert={!ready} aria-busy={!ready}>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
-          <InvoiceForm invoice={current} onChange={patch} />
+          <InvoiceForm invoice={invoice} onChange={patch} />
           <div className="lg:sticky lg:top-20">
             <div className="mb-2 font-mono text-[10.5px] tracking-[0.22em] uppercase text-[var(--fg-dim)]">
               Live preview
             </div>
-            <InvoicePreview invoice={current} />
+            <InvoicePreview invoice={invoice} />
           </div>
         </div>
       </section>
@@ -213,7 +212,7 @@ export function InvoiceGeneratorClient() {
       <section className="mx-auto max-w-7xl w-full px-4 sm:px-6 pb-8">
         <SavedInvoicesPanel
           invoices={invoices}
-          currentId={current.id}
+          currentId={current?.id ?? ""}
           onEdit={editSaved}
           onDuplicate={(id) => {
             const src = invoices.find((i) => i.id === id);

@@ -2,8 +2,11 @@ import { describe, it, expect } from "vitest";
 import {
   computeTotals,
   currencyMinorDigits,
+  DEFAULT_SENDER,
+  emptyInvoice,
   roundTo,
   nextInvoiceNumber,
+  placeholderInvoice,
   type Invoice,
   type LineItem,
 } from "../invoice-types";
@@ -79,5 +82,33 @@ describe("nextInvoiceNumber", () => {
 
   it("falls back to INV0001 for an empty list", () => {
     expect(nextInvoiceNumber([])).toBe("INV0001");
+  });
+});
+
+describe("placeholderInvoice", () => {
+  // Blank out the fields that hold random ids or the current time, which the
+  // placeholder leaves out so server and client renders match.
+  function withoutVolatileFields(invoice: Invoice): Invoice {
+    return {
+      ...invoice,
+      id: "",
+      dateISO: "",
+      createdAt: 0,
+      updatedAt: 0,
+      items: invoice.items.map((item) => ({ ...item, id: "" })),
+    };
+  }
+
+  it("is the same on every call, so SSR and hydration render identical HTML", () => {
+    expect(placeholderInvoice()).toEqual(placeholderInvoice());
+  });
+
+  it("has the same shape as a fresh invoice, so the editor keeps its size when it's replaced", () => {
+    const fresh = emptyInvoice(DEFAULT_SENDER, nextInvoiceNumber([]));
+    expect(withoutVolatileFields(placeholderInvoice())).toEqual(withoutVolatileFields(fresh));
+  });
+
+  it("doesn't share the default sender object", () => {
+    expect(placeholderInvoice().sender).not.toBe(DEFAULT_SENDER);
   });
 });

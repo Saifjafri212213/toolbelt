@@ -202,6 +202,30 @@ export function emptyInvoice(sender: SenderProfile, number: string): Invoice {
   };
 }
 
+/**
+ * Stand-in for the working invoice until it's seeded from localStorage after
+ * mount. It has the same shape as a fresh `emptyInvoice` (default sender, one
+ * blank line item), so the editor and preview render at their real size during
+ * SSR and hydration instead of collapsing and pushing the page down later.
+ * It has no random ids or dates, so the server and client HTML match.
+ */
+export function placeholderInvoice(): Invoice {
+  return {
+    id: "placeholder",
+    number: nextInvoiceNumber([]),
+    dateISO: "",
+    dueText: "On Receipt",
+    currency: "USD",
+    sender: cloneSender(DEFAULT_SENDER),
+    billTo: { name: "", email: "", addressLines: [] },
+    items: [{ id: "placeholder-item", description: "", rate: 0, qty: 1 }],
+    taxRate: 0,
+    notes: "",
+    createdAt: 0,
+    updatedAt: 0,
+  };
+}
+
 /** Reference invoice used by the "Load example" action. */
 export function exampleInvoice(number: string): Invoice {
   const now = Date.now();
