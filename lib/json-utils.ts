@@ -372,10 +372,23 @@ function yamlString(s: string): string {
   return `"${escaped}"`;
 }
 
+// YAML 1.1 parsers such as PyYAML only read a number with an exponent as a float
+// when it has a dot and a signed exponent ("1.0e+3"). "1e3" and "2e+5" load as
+// strings there, so add what's missing. Every other number is kept exactly as
+// written, so long values don't lose digits.
+const EXPONENT_NUMBER = /^(-?\d+)(\.\d+)?([eE])([+-]?)(\d+)$/;
+
+function yamlNumber(text: string): string {
+  const match = EXPONENT_NUMBER.exec(text);
+  if (!match) return text;
+  const [, whole, fraction = ".0", e, sign, exponent] = match;
+  return `${whole}${fraction}${e}${sign || "+"}${exponent}`;
+}
+
 function yamlValue(value: unknown, indent: number): string {
   const pad = "  ".repeat(indent);
   if (value === null) return "null";
-  if (isLosslessNumber(value)) return value.toString();
+  if (isLosslessNumber(value)) return yamlNumber(value.toString());
   if (typeof value === "boolean") return value ? "true" : "false";
   if (typeof value === "number") {
     if (!Number.isFinite(value)) return ".nan";

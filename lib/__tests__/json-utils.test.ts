@@ -237,6 +237,59 @@ describe("toXML", () => {
   });
 });
 
+describe("toYAML writes numbers with an exponent as YAML 1.1 floats", () => {
+  // PyYAML needs a dot and a signed exponent to read a float, so it loads
+  // "1e3" as a string. The numbers keep their JSON digits otherwise.
+  const yamlOf = (json: string): string => {
+    const out = toYAML(json);
+    if (!out.ok) throw new Error(out.error.message);
+    return out.value;
+  };
+
+  it("adds the missing dot and sign, as in the example from the issue", () => {
+    expect(yamlOf('{"num":1e3,"tiny":1e-7}')).toBe("num: 1.0e+3\ntiny: 1.0e-7\n");
+  });
+
+  it.each([
+    ["1.5e3", "1.5e+3"],
+    ["1E3", "1.0E+3"],
+    ["2e+5", "2.0e+5"],
+    ["-1e3", "-1.0e+3"],
+    ["1.0e3", "1.0e+3"],
+    ["1.5e-3", "1.5e-3"],
+    ["1e-7", "1.0e-7"],
+    ["1.0E-3", "1.0E-3"],
+    ["1.0e+3", "1.0e+3"],
+    ["-2.5E+10", "-2.5E+10"],
+    ["1e03", "1.0e+03"],
+    ["0e0", "0.0e+0"],
+  ])("writes %s as %s", (written, expected) => {
+    expect(yamlOf(`{"num":${written}}`)).toBe(`num: ${expected}\n`);
+  });
+
+  it("keeps every digit of a long number", () => {
+    expect(yamlOf('{"num":1.2345678901234567890123e5}')).toBe("num: 1.2345678901234567890123e+5\n");
+    expect(yamlOf('{"num":12345678901234567890123e5}')).toBe("num: 12345678901234567890123.0e+5\n");
+  });
+
+  it.each(["12", "1.5", "-0.5", "0", "12345678901234567890", "-9007199254740993", "0.1"])(
+    "leaves %s unchanged",
+    (written) => {
+      expect(yamlOf(`{"num":${written}}`)).toBe(`num: ${written}\n`);
+    },
+  );
+
+  it("fixes numbers inside arrays and nested objects", () => {
+    expect(yamlOf('{"list":[1e3,2],"deep":{"items":[{"val":5E-2}]}}')).toBe(
+      "list:\n  - 1.0e+3\n  - 2\ndeep:\n  items:\n    - val: 5.0E-2\n",
+    );
+  });
+
+  it("does not touch strings that look like exponent numbers", () => {
+    expect(yamlOf('{"s":"1e3"}')).toBe('s: "1e3"\n');
+  });
+});
+
 describe("escapeForCode rust", () => {
   it("produces a raw string that does not close early on a leading-# value", () => {
     const out = escapeForCode('{"color":"#fff"}', "rust");
