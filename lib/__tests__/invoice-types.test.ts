@@ -83,6 +83,35 @@ describe("nextInvoiceNumber", () => {
   it("falls back to INV0001 for an empty list", () => {
     expect(nextInvoiceNumber([])).toBe("INV0001");
   });
+
+  it.each([
+    ["1001", "1002"],
+    ["INV-07", "INV-08"],
+    ["A1", "A2"],
+    ["2026-001", "2026-002"],
+    ["999", "1000"],
+    ["INV0007", "INV0008"],
+  ])("keeps the prefix and padding of %s, giving %s", (highest, expected) => {
+    expect(nextInvoiceNumber([base(highest)])).toBe(expected);
+  });
+
+  it("lets a number that outgrows its width get longer", () => {
+    expect(nextInvoiceNumber([base("INV-99")])).toBe("INV-100");
+    expect(nextInvoiceNumber([base("INV9999")])).toBe("INV10000");
+  });
+
+  it("follows the highest number, not the last one saved", () => {
+    expect(nextInvoiceNumber([base("INV-02"), base("INV-10"), base("INV-03")])).toBe("INV-11");
+  });
+
+  it("ignores trailing spaces and invoices without a number", () => {
+    expect(nextInvoiceNumber([base("1001  "), base("draft"), base("")])).toBe("1002");
+  });
+
+  it("starts at the fallback prefix when no invoice has a number", () => {
+    expect(nextInvoiceNumber([base("draft"), base("")])).toBe("INV0001");
+    expect(nextInvoiceNumber([], "BILL", 6)).toBe("BILL000001");
+  });
 });
 
 describe("placeholderInvoice", () => {

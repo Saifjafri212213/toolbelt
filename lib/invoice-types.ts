@@ -152,25 +152,25 @@ export function todayISO(): string {
 }
 
 /**
- * Next number after the highest existing one. Preserves the prefix and
- * zero-padding of the highest invoice (so "INV0041" -> "INV0042").
- * Empty list -> "INV0001".
+ * Next number after the highest existing one. Keeps the prefix (even an empty
+ * one) and the zero-padding of the highest invoice exactly as they are:
+ * "INV0041" -> "INV0042", "1001" -> "1002", "INV-07" -> "INV-08". A number that
+ * outgrows its width just gets longer ("INV-99" -> "INV-100").
+ * With no numbered invoice yet, starts at `fallbackPrefix` + `pad` digits:
+ * "INV0001".
  */
 export function nextInvoiceNumber(invoices: Invoice[], fallbackPrefix = "INV", pad = 4): string {
-  let max = 0;
-  let prefix = fallbackPrefix;
-  let width = pad;
+  let highest: { prefix: string; digits: string; value: number } | undefined;
   for (const inv of invoices) {
     const match = (inv.number || "").match(/^(.*?)(\d+)\s*$/);
     if (!match) continue;
-    const n = parseInt(match[2], 10);
-    if (n >= max) {
-      max = n;
-      prefix = match[1] || fallbackPrefix;
-      width = Math.max(pad, match[2].length);
+    const value = parseInt(match[2], 10);
+    if (!highest || value >= highest.value) {
+      highest = { prefix: match[1], digits: match[2], value };
     }
   }
-  return `${prefix}${String(max + 1).padStart(width, "0")}`;
+  if (!highest) return `${fallbackPrefix}${String(1).padStart(pad, "0")}`;
+  return `${highest.prefix}${String(highest.value + 1).padStart(highest.digits.length, "0")}`;
 }
 
 export const DEFAULT_SENDER: SenderProfile = {
