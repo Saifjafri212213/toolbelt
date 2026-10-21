@@ -6,7 +6,7 @@ import {
   base64ToBytes,
   bytesToBase64,
   decodeUtf8Bytes,
-  detectBase64,
+  detectBase64Text,
   formatBytes,
   gunzipBytes,
   gzipBytes,
@@ -101,7 +101,7 @@ export function TextTab() {
   function handlePaste(e: React.ClipboardEvent<HTMLTextAreaElement>) {
     if (direction === "encode") {
       const pasted = e.clipboardData.getData("text");
-      if (pasted && detectBase64(pasted)) {
+      if (pasted && detectBase64Text(pasted, { gzip })) {
         setAutoDetected(true);
         setDirection("decode");
         setTimeout(() => setAutoDetected(false), 4000);

@@ -5,6 +5,7 @@ import {
   decodeText,
   decodeUtf8Bytes,
   detectBase64,
+  detectBase64Text,
   bytesToBase32,
   bytesToBase58,
   bytesToAscii85,
@@ -102,6 +103,44 @@ describe("detectBase64", () => {
   it("accepts real base64 with digits or padding", () => {
     expect(detectBase64("aGVsbG8gd29ybGQ=")).toBe(true);
     expect(detectBase64(encodeText("hello world", { urlSafe: false, padding: true }))).toBe(true);
+  });
+});
+
+describe("detectBase64Text", () => {
+  it.each(["password123", "hello-world", "2024-01-15", "user_id_123"])(
+    "treats %s as plain text to encode, not base64",
+    (text) => {
+      // These pass detectBase64 and atob decodes them, but not to readable text.
+      expect(detectBase64(text)).toBe(true);
+      expect(detectBase64Text(text)).toBe(false);
+    },
+  );
+
+  it.each(["SGVsbG8=", "aGVsbG8gd29ybGQ"])("treats %s as base64 of text", (b64) => {
+    expect(detectBase64Text(b64)).toBe(true);
+  });
+
+  it("accepts base64 of text with unicode, URL-safe characters and surrounding spaces", () => {
+    expect(detectBase64Text(encodeText("héllo wörld ✓", { urlSafe: false, padding: true }))).toBe(true);
+    expect(detectBase64Text(encodeText("subjects?_d=>>>", { urlSafe: true, padding: false }))).toBe(true);
+    expect(detectBase64Text("  SGVsbG8gV29ybGQ=  ")).toBe(true);
+  });
+
+  it("still rejects things detectBase64 rejects", () => {
+    expect(detectBase64Text("password")).toBe(false);
+    expect(detectBase64Text("short1")).toBe(false);
+    expect(detectBase64Text("two words1234")).toBe(false);
+  });
+
+  it("only accepts gzipped base64 when the gzip option is on", () => {
+    const gz = bytesToBase64(gzipSync(Buffer.from("hello world, hello world")));
+    expect(detectBase64Text(gz)).toBe(false);
+    expect(detectBase64Text(gz, { gzip: false })).toBe(false);
+    expect(detectBase64Text(gz, { gzip: true })).toBe(true);
+  });
+
+  it("doesn't let the gzip option turn plain text into base64", () => {
+    expect(detectBase64Text("password123", { gzip: true })).toBe(false);
   });
 });
 

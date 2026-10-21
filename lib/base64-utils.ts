@@ -83,6 +83,20 @@ export function detectBase64(s: string): boolean {
   }
 }
 
+/**
+ * Whether pasted text is base64 of text, not just text that uses the base64
+ * alphabet. `password123`, `hello-world` and `2024-01-15` pass `detectBase64`
+ * and `atob` decodes them, but the bytes aren't valid UTF-8, so they are plain
+ * text to encode. With the gzip option on, compressed base64 counts too.
+ */
+export function detectBase64Text(s: string, { gzip = false }: { gzip?: boolean } = {}): boolean {
+  if (!detectBase64(s)) return false;
+  const bytes = base64ToBytes(s);
+  if (!bytes.ok) return false;
+  if (decodeUtf8Bytes(bytes.value).ok) return true;
+  return gzip && getMimeFromMagicBytes(bytes.value)?.mime === "application/gzip";
+}
+
 export function splitLines(s: string, n = 76): string {
   const out: string[] = [];
   for (let i = 0; i < s.length; i += n) out.push(s.slice(i, i + n));
