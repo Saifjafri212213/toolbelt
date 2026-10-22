@@ -103,6 +103,27 @@ export function splitLines(s: string, n = 76): string {
   return out.join("\n");
 }
 
+export interface Base64DataUri {
+  /** The media type, or "text/plain" when the URI leaves it out (`data:;base64,...`). */
+  mediaType: string;
+  /** Everything that was stripped, parameters included, such as `data:text/plain;charset=utf-8;base64,`. */
+  prefix: string;
+  /** The base64 text after the prefix. */
+  payload: string;
+}
+
+/**
+ * Splits a `data:` URI whose payload is base64 (RFC 2397). The media type can be
+ * followed by `;name=value` parameters such as `;charset=utf-8` before `;base64,`,
+ * and the scheme and `base64` match in any letter case. Returns null for anything
+ * else, including a data URI without `;base64` (`data:text/plain,hello`).
+ */
+export function parseBase64DataUri(input: string): Base64DataUri | null {
+  const match = /^(data:([^;,]*)(?:;[^;,]*)*?;base64,)([\s\S]*)$/i.exec(input.trim());
+  if (!match) return null;
+  return { mediaType: match[2].trim() || "text/plain", prefix: match[1], payload: match[3] };
+}
+
 export function toDataUri(bytes: Uint8Array, mime: string): string {
   return `data:${mime};base64,${bytesToBase64(bytes, { urlSafe: false, padding: true })}`;
 }

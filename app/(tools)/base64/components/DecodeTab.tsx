@@ -6,6 +6,7 @@ import {
   base64ToBytes,
   formatBytes,
   getMimeFromMagicBytes,
+  parseBase64DataUri,
   toDataUri,
 } from "@/lib/base64-utils";
 import { downloadBlob } from "@/lib/download";
@@ -20,13 +21,9 @@ export function DecodeTab() {
   const { push } = useToast();
 
   // Auto-strip `data:...;base64,` prefix
-  const autoStripped = useMemo(() => {
-    const m = input.trim().match(/^data:([^;]+);base64,([\s\S]*)$/);
-    if (m) return { prefix: m[1], rest: m[2] };
-    return null;
-  }, [input]);
+  const autoStripped = useMemo(() => parseBase64DataUri(input), [input]);
 
-  const effectiveInput = autoStripped?.rest ?? input;
+  const effectiveInput = autoStripped?.payload ?? input;
 
   const result = useMemo(() => {
     if (!effectiveInput.trim()) return null;
@@ -36,10 +33,10 @@ export function DecodeTab() {
     let mime = getMimeFromMagicBytes(bytes);
     if (autoStripped) {
       mime = mime ?? {
-        mime: autoStripped.prefix,
-        extension: autoStripped.prefix.split("/")[1]?.split("+")[0] ?? "bin",
-        label: `${autoStripped.prefix} (from data URI)`,
-        isImage: autoStripped.prefix.startsWith("image/"),
+        mime: autoStripped.mediaType,
+        extension: autoStripped.mediaType.split("/")[1]?.split("+")[0] ?? "bin",
+        label: `${autoStripped.mediaType} (from data URI)`,
+        isImage: autoStripped.mediaType.startsWith("image/"),
       };
     }
     return {
@@ -82,7 +79,7 @@ export function DecodeTab() {
           <div className="px-3 py-2 border-b border-[var(--hairline)] bg-[rgba(0,229,199,0.04)] flex items-center gap-2">
             <InfoIcon className="w-3.5 h-3.5 text-[var(--cyan)]" />
             <span className="font-mono text-[11.5px] text-[var(--fg-muted)]">
-              Detected data URI — stripped <span className="text-[var(--cyan)]">data:{autoStripped.prefix};base64,</span>
+              Detected data URI — stripped <span className="text-[var(--cyan)]">{autoStripped.prefix}</span>
             </span>
           </div>
         )}

@@ -6,6 +6,7 @@ import {
   decodeUtf8Bytes,
   detectBase64,
   detectBase64Text,
+  parseBase64DataUri,
   bytesToBase32,
   bytesToBase58,
   bytesToAscii85,
@@ -141,6 +142,70 @@ describe("detectBase64Text", () => {
 
   it("doesn't let the gzip option turn plain text into base64", () => {
     expect(detectBase64Text("password123", { gzip: true })).toBe(false);
+  });
+});
+
+describe("parseBase64DataUri", () => {
+  const HELLO = "SGVsbG8gV29ybGQ=";
+
+  it("splits a plain base64 data URI", () => {
+    expect(parseBase64DataUri(`data:text/plain;base64,${HELLO}`)).toEqual({
+      mediaType: "text/plain",
+      prefix: "data:text/plain;base64,",
+      payload: HELLO,
+    });
+  });
+
+  it.each([
+    ["data:text/plain;charset=utf-8;base64,", "text/plain"],
+    ["data:application/json;charset=UTF-8;base64,", "application/json"],
+    ["data:text/plain;charset=utf-8;format=flowed;base64,", "text/plain"],
+    ["data:image/svg+xml;charset=utf-8;base64,", "image/svg+xml"],
+    ["data:text/plain;name=a.txt;base64,", "text/plain"],
+  ])("allows parameters before ;base64 in %s and keeps only the media type", (prefix, mediaType) => {
+    expect(parseBase64DataUri(prefix + HELLO)).toEqual({ mediaType, prefix, payload: HELLO });
+  });
+
+  it("matches the scheme and base64 in any letter case", () => {
+    expect(parseBase64DataUri(`DATA:text/plain;BASE64,${HELLO}`)).toEqual({
+      mediaType: "text/plain",
+      prefix: "DATA:text/plain;BASE64,",
+      payload: HELLO,
+    });
+  });
+
+  it("falls back to text/plain when the media type is empty", () => {
+    expect(parseBase64DataUri(`data:;base64,${HELLO}`)?.mediaType).toBe("text/plain");
+    expect(parseBase64DataUri(`data:;charset=utf-8;base64,${HELLO}`)?.mediaType).toBe("text/plain");
+  });
+
+  it("ignores spaces around the URI and keeps the payload as it is", () => {
+    const parsed = parseBase64DataUri(`  data:text/plain;base64,SGVs\nbG8=  `);
+    expect(parsed?.payload).toBe("SGVs\nbG8=");
+  });
+
+  it.each([
+    "data:text/plain,hello",
+    "data:text/plain;charset=utf-8,hello",
+    "data:text/plain;charset=utf-8,hello;base64,abc",
+    "data:text/plain;base64",
+    "text/plain;base64,SGVsbG8=",
+    "SGVsbG8gV29ybGQ=",
+    "",
+  ])("returns null for %j", (input) => {
+    expect(parseBase64DataUri(input)).toBeNull();
+  });
+
+  it("does not hang on input with a very long run of semicolons", () => {
+    const hostile = `data:text/plain${";a".repeat(50_000)}`;
+    const started = Date.now();
+    expect(parseBase64DataUri(hostile)).toBeNull();
+    expect(Date.now() - started).toBeLessThan(1000);
+  });
+
+  it("handles a large payload", () => {
+    const payload = "A".repeat(2_000_000);
+    expect(parseBase64DataUri(`data:application/octet-stream;charset=binary;base64,${payload}`)?.payload).toHaveLength(2_000_000);
   });
 });
 
