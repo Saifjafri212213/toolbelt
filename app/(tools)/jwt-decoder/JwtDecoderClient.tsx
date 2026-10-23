@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import {
   decodeJwt,
+  stringifyJwtJson,
   describeAlg,
   SAMPLE_JWT,
   securityAudit,
@@ -116,9 +117,8 @@ export function JwtDecoderClient() {
 
   const downloadJson = useCallback(() => {
     if (!decoded) return;
-    const json = JSON.stringify(
+    const json = stringifyJwtJson(
       { header: decoded.header, payload: decoded.payload, signature: decoded.signature },
-      null,
       2
     );
     downloadBlob(json, "decoded-jwt.json", "application/json");
