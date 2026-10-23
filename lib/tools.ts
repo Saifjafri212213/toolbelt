@@ -580,6 +580,59 @@ export const TOOLS: Tool[] = [
     },
     sitemapPriority: 0.9,
   },
+  {
+    slug: "cron-explainer",
+    path: "/cron-explainer",
+    title: "Cron Expression Explainer",
+    tagline: "Scheduling",
+    cardDescription:
+      "Paste a crontab line and get a plain-English description, a field-by-field breakdown and the next run times in UTC or your local time.",
+    features: ["Plain English", "Next runs", "Ranges and steps", "Macros", "UTC or local"],
+    accentVar: "--sky",
+    accentHex: "#5AB5FF",
+    metaTitle: "Cron Expression Explainer - Free Online Tool",
+    metaDescription:
+      "Paste a cron expression and read it in plain English with the next run times. Handles ranges, steps, names and macros like @daily. Runs in your browser.",
+    ogTitle: "Cron Expression Explainer - CODERCOPS Tools",
+    ogDescription:
+      "Explain any cron expression in plain English and see the next run times in UTC or local time. Free and private.",
+    heroBreadcrumb: "Scheduling",
+    heroHeading: "Cron Expression Explainer",
+    heroDim: "",
+    heroDescription:
+      "Paste a crontab line from a CI schedule, a Kubernetes CronJob or a GitHub Actions workflow and see what it means, field by field, with the next times it runs. Everything stays in your browser.",
+    jsonLdName: "Cron Expression Explainer",
+    jsonLdDescription:
+      "A browser-based cron expression explainer that describes a schedule in plain English, breaks it down field by field and lists the next run times in UTC or local time.",
+    applicationCategory: "DeveloperApplication",
+    faqs: [
+      {
+        q: "Which cron syntax does it understand?",
+        a: "Standard five-field cron: minute, hour, day of month, month and day of week. It reads lists, ranges, steps such as */15 and 1-10/2, month and weekday names such as JAN and MON, and the macros @hourly, @daily, @weekly, @monthly and @yearly. Seconds and year fields (Quartz style) and Jenkins H syntax are not supported.",
+      },
+      {
+        q: "What happens when both the day of month and the day of week are set?",
+        a: "Classic cron runs the job on days that match either one. So 0 0 1 * 1 runs at midnight on the first of every month and also every Monday. If either field starts with *, both have to match.",
+      },
+      {
+        q: "How are the next run times worked out?",
+        a: "The tool steps through the calendar from the current time and lists the next five times the schedule fires, in UTC or in your local time. A schedule that can never run, such as 0 0 31 2 *, says so instead of searching forever.",
+      },
+      {
+        q: "Is my cron expression sent to a server?",
+        a: "No. Parsing, describing and working out the run times all happen in your browser. Nothing you type is uploaded.",
+      },
+    ],
+    cta: {
+      headline: "Running scheduled jobs in production?",
+      sub: "CODERCOPS builds reliable backends, data pipelines, and full-stack applications for startups and enterprises.",
+      primaryLabel: "View our work",
+      primaryHref: CTA_PROJECTS,
+      secondaryLabel: "Get in touch",
+      secondaryHref: CTA_CONTACT,
+    },
+    sitemapPriority: 0.9,
+  },
 ];
 
 export function getTool(slug: string): Tool | undefined {
