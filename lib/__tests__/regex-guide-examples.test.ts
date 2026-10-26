@@ -102,6 +102,8 @@ describe("regex guide: replacement codes", () => {
 
   it("turns a group that did not match into an empty string", () => {
     expect(replaced("(a)|(b)", "g", "ab", "[$1][$2]")).toBe("[a][][][b]");
+    // Without g only the first match is replaced
+    expect(replaced("(a)|(b)", "", "ab", "[$1][$2]")).toBe("[a][]b");
   });
 
   it("reads $10 as group 1 and a 0 when there are fewer than ten groups", () => {
@@ -118,6 +120,7 @@ describe("regex guide: empty matches", () => {
       ["", 5, 5],
     ]);
     expect(replaced("a*", "g", "baaac", "X")).toBe("XbXXcX");
+    expect(replaced("a*", "", "baaac", "X")).toBe("Xbaaac");
   });
 
   it("steps past an empty match by a code unit, or by a whole character with u", () => {
