@@ -264,6 +264,89 @@ describe("describeCron", () => {
     expect(describe_("0 8 1-7 * 1")).toBe("At 08:00 on days 1 through 7 of the month and on Monday");
   });
 
+  // The day rule is the one nextRuns uses: when neither field starts with *, a day matches if
+  // either one does, so a field that covers every value makes every day match.
+  describe("days when a field covers every value", () => {
+    it.each([
+      ["0 0 1-31 * 1-5", "At 00:00 every day"],
+      ["0 0 1-31 * 1", "At 00:00 every day"],
+      ["0 0 1-31 * 6,0", "At 00:00 every day"],
+      ["0 0 1,15 * 0-6", "At 00:00 every day"],
+      ["0 0 1,15 * 0-7", "At 00:00 every day"],
+      ["0 0 1 * 0-6", "At 00:00 every day"],
+      ["0 0 1-31 * 0-6", "At 00:00 every day"],
+      ["0 0 1-31 1 1-5", "At 00:00 in January"],
+      ["0 0 1-31 * *", "At 00:00 every day"],
+      ["0 0 * * 0-6", "At 00:00 every day"],
+    ])("describes %s as %j", (expression, sentence) => {
+      expect(describe_(expression)).toBe(sentence);
+    });
+
+    it("still says weekdays when the day of month is left open", () => {
+      expect(describe_("0 0 * * 1-5")).toBe("At 00:00 on weekdays");
+    });
+
+    it("keeps both parts when neither field covers every value", () => {
+      expect(describe_("0 0 1 * 1")).toBe("At 00:00 on day 1 of the month and on Monday");
+      expect(describe_("0 0 1-15 * 1-5")).toBe("At 00:00 on days 1 through 15 of the month and on weekdays");
+      expect(describe_("0 0 31 * 6,0")).toBe("At 00:00 on day 31 of the month and on weekends");
+    });
+
+    // Same grid as the next runs: says "every day" exactly when every day of the year runs.
+    const DAYS_OF_MONTH = ["*", "*/2", "1", "1,15", "1-15", "15-31", "1-31", "1-30", "*/10"];
+    const DAYS_OF_WEEK = ["*", "*/2", "0", "1", "1-5", "6,0", "0-6", "0-7", "1-6", "1-6,0"];
+    const runsOnDay = (cron: ParsedCron, date: Date) => {
+      const domMatch = cron.dayOfMonth.values.includes(date.getUTCDate());
+      const dowMatch = cron.dayOfWeek.values.includes(date.getUTCDay());
+      return !cron.dayOfMonth.star && !cron.dayOfWeek.star ? domMatch || dowMatch : domMatch && dowMatch;
+    };
+    const everyDayOfYear = (cron: ParsedCron) =>
+      Array.from({ length: 365 }, (_, i) => new Date(Date.UTC(2026, 0, 1 + i))).every((date) => runsOnDay(cron, date));
+
+    it.each(DAYS_OF_MONTH.flatMap((dom) => DAYS_OF_WEEK.map((dow) => [dom, dow])))(
+      "says every day for day of month %s and day of week %s only when every day runs",
+      (dom, dow) => {
+        const expression = `0 0 ${dom} * ${dow}`;
+        expect(describe_(expression) === "At 00:00 every day", expression).toBe(everyDayOfYear(parse(expression)));
+      },
+    );
+
+    it("agrees with the next runs for the example in the issue", () => {
+      // From Friday 23 October 2026: every day, weekends included
+      expect(runs("0 0 1-31 * 1-5", "2026-10-23T10:00:00Z")).toEqual([
+        "2026-10-24T00:00Z",
+        "2026-10-25T00:00Z",
+        "2026-10-26T00:00Z",
+        "2026-10-27T00:00Z",
+        "2026-10-28T00:00Z",
+      ]);
+      expect(describe_("0 0 1-31 * 1-5")).toBe("At 00:00 every day");
+    });
+  });
+
+  // When only one of the two fields starts with *, both have to match, not either one.
+  describe("days when a * with a step is combined with the other field", () => {
+    it("says that both have to match", () => {
+      expect(describe_("0 0 */10 * 1")).toBe("At 00:00 on days 1, 11, 21 and 31 of the month, but only on Monday");
+      expect(describe_("0 0 1,15 * */2")).toBe(
+        "At 00:00 on days 1 and 15 of the month, but only on Tuesday, Thursday, Saturday and Sunday",
+      );
+    });
+
+    it("matches the next runs: only a Monday that is also day 1, 11, 21 or 31", () => {
+      expect(runs("0 0 */10 * 1", "2026-10-23T10:00:00Z", 3)).toEqual([
+        "2026-12-21T00:00Z",
+        "2027-01-11T00:00Z",
+        "2027-02-01T00:00Z",
+      ]);
+    });
+
+    it("leaves a star with a step alone when the other field is open", () => {
+      expect(describe_("0 0 */10 * *")).toBe("At 00:00 on days 1, 11, 21 and 31 of the month");
+      expect(describe_("0 0 * * */2")).toBe("At 00:00 on Tuesday, Thursday, Saturday and Sunday");
+    });
+  });
+
   it.each([
     ["@hourly", "Every hour, on the hour"],
     ["@daily", "At 00:00 every day"],

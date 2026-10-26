@@ -173,6 +173,19 @@ describe("CronExplainerClient", () => {
     });
   });
 
+  describe("a day of month that covers every day", () => {
+    it("says every day when the runs include weekends, as for 0 0 1-31 * 1-5", async () => {
+      renderClient();
+      type("0 0 1-31 * 1-5");
+      expect(screen.getByText("At 00:00 every day", { selector: "p" })).toBeInTheDocument();
+      expect(screen.queryByText(/weekdays/)).not.toBeInTheDocument();
+      // 2026-10-23 is a Friday, so the next runs are Saturday and Sunday
+      const runs = within(await runsList()).getAllByRole("listitem");
+      expect(runs[0]).toHaveTextContent("Sat, 24 Oct 2026, 00:00 UTC");
+      expect(runs[1]).toHaveTextContent("Sun, 25 Oct 2026, 00:00 UTC");
+    });
+  });
+
   describe("notes", () => {
     it("explains a macro", () => {
       renderClient();

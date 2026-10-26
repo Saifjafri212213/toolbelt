@@ -265,8 +265,13 @@ function describeTime(cron: ParsedCron): string {
 function describeDays(cron: ParsedCron): string {
   const phrases: string[] = [];
 
-  const domRestricted = !isAll(cron.dayOfMonth, specOf("dayOfMonth"));
-  const dowRestricted = !isAll(cron.dayOfWeek, specOf("dayOfWeek"));
+  // The same rule as nextRuns: when neither field starts with *, a day matches if either one
+  // does, so a field that covers every value makes every day match. Otherwise both must match.
+  const either = !cron.dayOfMonth.star && !cron.dayOfWeek.star;
+  const domAll = isAll(cron.dayOfMonth, specOf("dayOfMonth"));
+  const dowAll = isAll(cron.dayOfWeek, specOf("dayOfWeek"));
+  const domRestricted = !domAll && !(either && dowAll);
+  const dowRestricted = !dowAll && !(either && domAll);
 
   const dom = domRestricted
     ? `on day${cron.dayOfMonth.values.length > 1 ? "s" : ""} ${listValues(cron.dayOfMonth.values, String)} of the month`
@@ -280,8 +285,7 @@ function describeDays(cron: ParsedCron): string {
     else dow = `on ${listValues(days, weekdayName)}`;
   }
 
-  // When both are restricted, cron runs on days that match either one.
-  if (dom && dow) phrases.push(`${dom} and ${dow}`);
+  if (dom && dow) phrases.push(either ? `${dom} and ${dow}` : `${dom}, but only ${dow}`);
   else if (dom || dow) phrases.push(dom || dow);
 
   if (!isAll(cron.month, specOf("month"))) {
