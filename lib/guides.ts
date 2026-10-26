@@ -429,6 +429,78 @@ export const GUIDES: Guide[] = [
     relatedTools: ["base64"],
     sitemapPriority: 0.8,
   },
+  {
+    slug: "test-regex-in-javascript",
+    path: "/guides/test-regex-in-javascript",
+    title: "How to Test a Regular Expression in JavaScript",
+    tagline: "Regex Guide",
+    cardDescription:
+      "Test a JavaScript regular expression, read its flags and capture groups, use $1 and $<name> in replacements, and avoid empty-match and backtracking surprises.",
+    tags: ["Regex", "JavaScript", "Capture groups", "Debugging"],
+    accentVar: "--cyan",
+    accentHex: "#00E5C7",
+    metaTitle: "How to Test a Regular Expression in JavaScript",
+    metaDescription:
+      "Test a JavaScript regex with test(), matchAll() and replace(). Learn flags, named groups, $1 and $<name>, empty matches, escaping and backtracking.",
+    ogTitle: "How to Test a Regular Expression in JavaScript - CODERCOPS Guides",
+    ogDescription:
+      "A practical guide to testing JavaScript regexes: flags, capture groups, replacement tokens, empty matches, escaping and catastrophic backtracking.",
+    publishedAt: "2026-10-26",
+    updatedAt: "2026-10-26",
+    readingTime: "8 min read",
+    totalTime: "PT8M",
+    steps: [
+      {
+        name: "Write the pattern and choose flags",
+        text: "Type the pattern without the surrounding slashes and switch on the flags you need: g for every match, i to ignore case, and m, s, u or y when the text calls for them.",
+        url: "#step-1",
+      },
+      {
+        name: "Paste text that should and should not match",
+        text: "Use sample text with matching lines, near misses and empty lines, so you see what the pattern accepts as well as what it rejects.",
+        url: "#step-2",
+      },
+      {
+        name: "Read the matches and capture groups",
+        text: "Check the highlighted matches, then the match details: each match's position, its numbered groups and its named groups.",
+        url: "#step-3",
+      },
+      {
+        name: "Preview the replacement",
+        text: "Type a replacement such as $3/$2/$<year> and check the result. Without the g flag only the first match is replaced.",
+        url: "#step-4",
+      },
+      {
+        name: "Carry the pattern into your code",
+        text: "Use the same pattern and flags in a regex literal or new RegExp(pattern, flags). Double the backslashes when the pattern is in a string, and do not reuse a regex with the g flag across test() calls.",
+        url: "#step-5",
+      },
+    ],
+    faqs: [
+      {
+        q: "How do I test a regex in JavaScript without writing code?",
+        a: "Paste the pattern and some sample text into the Regex Tester. It runs your browser's own RegExp engine, so the result matches what the same pattern does in your code. Every match is highlighted and listed with its position and capture groups, and a replace field previews the result.",
+      },
+      {
+        q: "Why does my regex work in the tester but not in Python or PHP?",
+        a: "Regex flavors differ. The tester uses the JavaScript flavor only, so a pattern that relies on another flavor's syntax, such as possessive quantifiers, is not valid there. Check the pattern against the engine that will run it.",
+      },
+      {
+        q: "Why does regex.test() return true and then false for the same text?",
+        a: "A regex with the g or y flag remembers where its last match ended in its lastIndex property, and the next call starts from there. Calling test() twice on the same text can therefore give true and then false. Drop the g flag when you only need a yes or no answer, or set lastIndex back to 0 before each call.",
+      },
+      {
+        q: "How much text can the Regex Tester handle?",
+        a: "The test text is limited to 100,000 characters, and at most 1,000 matches are listed. Past 1,000 the heading says it is showing the first 1,000. These limits do not stop a slow pattern: catastrophic backtracking can still make the page wait.",
+      },
+      {
+        q: "Is my text sent to a server?",
+        a: "No. Matching and replacing happen in your browser, and nothing you type is uploaded.",
+      },
+    ],
+    relatedTools: ["regex-tester"],
+    sitemapPriority: 0.8,
+  },
 ];
 
 export function getGuide(slug: string): Guide | undefined {
