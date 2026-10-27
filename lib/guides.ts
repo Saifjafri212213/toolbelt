@@ -649,6 +649,78 @@ export const GUIDES: Guide[] = [
     relatedTools: ["markdown-preview"],
     sitemapPriority: 0.8,
   },
+  {
+    slug: "read-and-write-cron-expressions",
+    path: "/guides/read-and-write-cron-expressions",
+    title: "How to Read and Write a Cron Expression",
+    tagline: "Cron Guide",
+    cardDescription:
+      "Read the five cron fields, write ranges, steps and names, find the schedule you need, and avoid the day-of-month and day-of-week, step and time zone surprises.",
+    tags: ["Cron", "Scheduling", "crontab", "DevOps"],
+    accentVar: "--sky",
+    accentHex: "#5AB5FF",
+    metaTitle: "How to Read and Write a Cron Expression",
+    metaDescription:
+      "Learn cron expression syntax: the five fields, ranges, steps and names, common schedules, the day-of-month and day-of-week rule, macros and time zones.",
+    ogTitle: "How to Read and Write a Cron Expression - CODERCOPS Guides",
+    ogDescription:
+      "A practical guide to cron syntax: the five fields, lists, ranges and steps, common schedules, the day rule, macros, time zones and how Quartz style differs.",
+    publishedAt: "2026-10-27",
+    updatedAt: "2026-10-27",
+    readingTime: "9 min read",
+    totalTime: "PT9M",
+    steps: [
+      {
+        name: "Write the five fields in order",
+        text: "Put the minute, hour, day of month, month and day of week on one line, separated by spaces. Use * for any value, so * * * * * runs every minute.",
+        url: "#step-1",
+      },
+      {
+        name: "Narrow each field with lists, ranges, steps and names",
+        text: "Use a comma for a list (9,17), a hyphen for an inclusive range (9-17), a slash for a step (*/15 or 9-17/2) and three-letter names for the month and the weekday (MON-FRI).",
+        url: "#step-2",
+      },
+      {
+        name: "Check the day-of-month and day-of-week rule",
+        text: "When neither day field starts with *, a day matches if either field matches. When one of them starts with *, both have to match.",
+        url: "#step-3",
+      },
+      {
+        name: "Read it back in the Cron Expression Explainer",
+        text: "Paste the expression into the explainer to see it in plain English, field by field, with the next five run times in UTC or your local time.",
+        url: "#step-4",
+      },
+      {
+        name: "Check the time zone where the job will run",
+        text: "An expression has no time zone of its own. It fires by the clock of the system that runs it, so confirm which time zone that scheduler uses before you rely on a local time.",
+        url: "#step-5",
+      },
+    ],
+    faqs: [
+      {
+        q: "How do I run a cron job every 5 minutes?",
+        a: "Use */5 * * * *. The */5 in the minute field is a step of 5 starting from 0, so it runs at minutes 0, 5, 10 and so on up to 55 of every hour. The Cron Expression Explainer reads it as \"Every 5 minutes\".",
+      },
+      {
+        q: "Is Sunday 0 or 7 in cron?",
+        a: "Both. The day-of-week field takes 0 to 7, and 0 and 7 are both Sunday, so 0 0 * * 0 and 0 0 * * 7 are the same schedule. You can also write SUN.",
+      },
+      {
+        q: "Why did my monthly cron job skip some months?",
+        a: "A day that a month does not have never matches. 0 0 31 * * runs only in the months that have 31 days, so it is skipped in February, April, June, September and November. Standard five-field cron has no \"last day of the month\" syntax.",
+      },
+      {
+        q: "Can cron run a job every 10 seconds?",
+        a: "Not with five fields: the smallest unit is a minute. Schedulers that use a Quartz-style expression add a seconds field at the start, which the Cron Expression Explainer does not read.",
+      },
+      {
+        q: "Is my cron expression sent to a server?",
+        a: "No. Parsing, describing and working out the run times all happen in your browser. Nothing you type is uploaded.",
+      },
+    ],
+    relatedTools: ["cron-explainer"],
+    sitemapPriority: 0.8,
+  },
 ];
 
 export function getGuide(slug: string): Guide | undefined {
