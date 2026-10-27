@@ -577,6 +577,78 @@ export const GUIDES: Guide[] = [
     relatedTools: ["regex-tester"],
     sitemapPriority: 0.8,
   },
+  {
+    slug: "make-a-table-in-markdown",
+    path: "/guides/make-a-table-in-markdown",
+    title: "How to Make a Table in Markdown",
+    tagline: "Markdown Guide",
+    cardDescription:
+      "Write a Markdown table with a header row and a separator row, align the columns, escape pipes, and fix a table that will not render. Plus task lists, strikethrough, code fences and autolinks.",
+    tags: ["Markdown", "GFM", "Tables", "GitHub"],
+    accentVar: "--green",
+    accentHex: "#3FDD6B",
+    metaTitle: "How to Make a Table in Markdown (GFM Syntax Guide)",
+    metaDescription:
+      "Make a Markdown table with a header row, a separator row and pipes. Align columns, escape pipes, fix a table that won't render, and preview it live.",
+    ogTitle: "How to Make a Table in Markdown - CODERCOPS Guides",
+    ogDescription:
+      "A practical guide to GitHub-flavored Markdown tables: the header and separator rows, alignment, escaping pipes, common mistakes, and the other GFM features people use next.",
+    publishedAt: "2026-10-27",
+    updatedAt: "2026-10-27",
+    readingTime: "7 min read",
+    totalTime: "PT7M",
+    steps: [
+      {
+        name: "Write the header row",
+        text: "Put the column names between pipes on one line, such as | Name | Role |. A table always has a header row; leave the cells empty if you do not want visible headings.",
+        url: "#step-1",
+      },
+      {
+        name: "Add the separator row",
+        text: "On the next line, write one group of hyphens for each column, such as | --- | --- |. Use a colon at the left, right or both ends of a group to align that column left, right or center. The number of columns must match the header row.",
+        url: "#step-2",
+      },
+      {
+        name: "Add one line for each data row",
+        text: "Write each row on its own line with a pipe between the cells. A row with fewer cells gets empty cells, and extra cells are ignored. The pipes do not have to line up.",
+        url: "#step-3",
+      },
+      {
+        name: "Escape pipes and mark line breaks",
+        text: "Write \\| for a pipe that belongs in a cell, including inside inline code, and use <br> for a line break inside a cell. Cells cannot hold lists, headings or code blocks.",
+        url: "#step-4",
+      },
+      {
+        name: "Leave a blank line after the table and preview it",
+        text: "A non-blank line right after the last row becomes another row, so end the table with a blank line. Then check the result in the Markdown Live Preview.",
+        url: "#step-5",
+      },
+    ],
+    faqs: [
+      {
+        q: "Can a Markdown table have merged cells or column widths?",
+        a: "No. The GitHub Flavored Markdown table syntax has no way to merge cells or to set column widths. The Markdown Live Preview does render an HTML table that you write in your Markdown, after sanitizing it, but other sites may remove HTML, so check where the Markdown will be shown.",
+      },
+      {
+        q: "Do the pipes in a Markdown table have to line up?",
+        a: "No. The spaces between a pipe and the cell content are trimmed, so a table written as |a|b| works the same as a neatly padded one. Lining the pipes up only makes the source easier to read.",
+      },
+      {
+        q: "How do I make a Markdown table without a header?",
+        a: "You cannot leave the header row out, because a table is defined as a header row, a separator row and the data rows. Leave the header cells empty, as in |  |  |, and the table is rendered with an empty header.",
+      },
+      {
+        q: "Why does my table work in the preview but not on another site?",
+        a: "Tables are an extension in GitHub Flavored Markdown. Original Markdown and plain CommonMark have no table syntax, so a site needs GFM or its own table extension to render one. Check which flavor the site uses.",
+      },
+      {
+        q: "Is my Markdown uploaded when I use the preview?",
+        a: "No. Parsing, sanitizing, previewing and exporting all happen in your browser, and your document never leaves the tab.",
+      },
+    ],
+    relatedTools: ["markdown-preview"],
+    sitemapPriority: 0.8,
+  },
 ];
 
 export function getGuide(slug: string): Guide | undefined {
