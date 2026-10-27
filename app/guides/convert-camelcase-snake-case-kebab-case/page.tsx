@@ -24,7 +24,6 @@ const tdClass = "px-4 py-3 align-top";
 const tdCodeClass = "px-4 py-3 align-top font-mono text-[var(--fg)] whitespace-nowrap";
 const linkClass = "text-[var(--cyan)] hover:underline";
 
-const C = ({ children }: { children: string }) => <code className={codeClass}>{children}</code>;
 
 type Row = [ReactNode, ReactNode, ReactNode];
 function Table({ heads, rows }: { heads: [string, string, string]; rows: Row[] }) {
@@ -138,7 +137,7 @@ export default function ConvertCamelcaseSnakeCaseKebabCaseGuidePage() {
             <h2 className={h2Class}>How do I convert a name from one style to another?</h2>
             <p>Every conversion does the same three things: split the name into words, lowercase them, and join them the way the new style asks. The style the name started in does not matter, because the splitting finds the words in all of them.</p>
             <Table heads={["Name", "Convert to", "Result"]} rows={CONVERT} />
-            <p className="mt-4">Some conversions cross a boundary between two worlds. A CSS property such as <code className={codeClass}>background-color</code> is <code className={codeClass}>backgroundColor</code> on <code className={codeClass}>element.style</code> in JavaScript: MDN says that this object has dash-named and camel-case named properties for every CSS property.</p>
+            <p className="mt-4">Some conversions cross a boundary between two worlds. A CSS property such as <code className={codeClass}>background-color</code> is <code className={codeClass}>backgroundColor</code> on <code className={codeClass}>element.style</code> in JavaScript: MDN says that this object has dash-named and camel-case named properties for every supported CSS property.</p>
           </section>
 
           <section>
@@ -171,7 +170,7 @@ export default function ConvertCamelcaseSnakeCaseKebabCaseGuidePage() {
 
           <section>
             <h2 className={h2Class}>Which style should I use in a URL?</h2>
-            <p>Use kebab-case. Google recommends separating the words in a URL with hyphens instead of underscores, because a hyphen clearly signals a word boundary. Google also treats URLs as case sensitive, so <code className={codeClass}>/Apple</code> and <code className={codeClass}>/apple</code> are different URLs, and it is simplest to write a URL in one case. The converter&apos;s kebab-case output is always lowercase.</p>
+            <p>Use kebab-case. Google recommends separating the words in a URL with hyphens instead of underscores, because hyphens help users and search engines better identify concepts in the URL. Google also treats URLs as case sensitive, so <code className={codeClass}>/Apple</code> and <code className={codeClass}>/apple</code> are different URLs, and it is simplest to write a URL in one case. The converter&apos;s kebab-case output is always lowercase.</p>
           </section>
 
           <section>

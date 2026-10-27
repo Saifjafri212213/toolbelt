@@ -779,7 +779,7 @@ export const GUIDES: Guide[] = [
       },
       {
         q: "Should I use hyphens or underscores in URLs?",
-        a: "Hyphens. Google recommends separating the words in a URL with hyphens instead of underscores, because a hyphen clearly signals a word boundary, so kebab-case is the style to use for the words in a URL path.",
+        a: "Hyphens. Google recommends separating the words in a URL with hyphens instead of underscores, because hyphens help users and search engines better identify concepts in the URL, so kebab-case is the style to use for the words in a URL path.",
       },
       {
         q: "Why did the converter lowercase my acronym?",
