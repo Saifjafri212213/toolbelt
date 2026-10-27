@@ -238,6 +238,18 @@ describe("cron guide: time zones", () => {
     // A time that does exist on that day is still listed.
     expect(nextRuns(parse("0 3 * * *"), before, 1, { utc: false })[0].getDate()).toBe(8);
   });
+
+  it("lists a local time once when it happens twice because the clocks go back (New York, 1 November 2026)", () => {
+    process.env.TZ = "America/New_York";
+    // The clocks go from 02:00 back to 01:00 on Sunday 1 November, so 01:30 happens twice.
+    const before = new Date(2026, 9, 31, 12, 0);
+    const days = nextRuns(parse("30 1 * * *"), before, 3, { utc: false }).map((date) => [date.getMonth() + 1, date.getDate(), date.getHours(), date.getMinutes()]);
+    expect(days).toEqual([
+      [11, 1, 1, 30],
+      [11, 2, 1, 30],
+      [11, 3, 1, 30],
+    ]);
+  });
 });
 
 describe("cron guide: Quartz style", () => {

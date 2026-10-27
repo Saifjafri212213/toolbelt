@@ -193,7 +193,8 @@ export default function ReadAndWriteCronExpressionsGuidePage() {
             <p>None. An expression only says when, by the clock of whatever runs it. crontab(5) lets a crontab have its own time zone with the <code className={codeClass}>CRON_TZ</code> variable. Check your scheduler&apos;s documentation for its own setting, and find out which zone it uses before you rely on a local time.</p>
             <p className="mt-4">The explainer shows the next five runs in <strong className="text-[var(--fg)]">UTC</strong>, which it starts on, or in the <strong className="text-[var(--fg)]">Local</strong> time zone of your browser, with a switch between them. It does not know the time zone of your server and does not read <code className={codeClass}>CRON_TZ</code>.</p>
             <h3 className={h3Class}>Daylight saving time</h3>
-            <p>In Local mode, a time that does not exist because the clocks went forward is left out of the list. In New York the clocks went forward from 02:00 to 03:00 on Sunday 8 March 2026, so <code className={codeClass}>30 2 * * *</code> has no 02:30 that day. In a browser set to New York time, the explainer skips it and lists 9 March next. Real cron can differ. cron(8) says that when the clock moves forward, jobs that run at a specific time and would have run in the skipped interval are run immediately, and that when it moves back, the same job is not run twice. So on a day when the clocks change, trust your scheduler&apos;s documentation over the list.</p>
+            <p>In Local mode, a time that does not exist because the clocks went forward is left out of the list. In New York the clocks went forward from 02:00 to 03:00 on Sunday 8 March 2026, so <code className={codeClass}>30 2 * * *</code> has no 02:30 that day. In a browser set to New York time, the explainer skips it and lists 9 March next. That matches crontab(5), which says that non-existent times, such as the missing hours of a daylight saving change, &quot;will never match&quot;, so a job set for one does not run, and that a time that happens twice makes the job run twice. The explainer lists a time that happens twice, such as 01:30 on 1 November 2026 in New York, once.</p>
+            <p className="mt-4">cron(8) describes it differently: when the clock moves forward, jobs that run at a specific time and would have run in the skipped interval are run immediately, and when it moves back, the same job is not run twice. The two man pages disagree, so on a day when the clocks change, check what your own scheduler does and trust that over any list, including the explainer&apos;s.</p>
           </section>
 
           <section>
@@ -203,7 +204,7 @@ export default function ReadAndWriteCronExpressionsGuidePage() {
               heads={["", "Five-field cron", "Quartz"]}
               rows={[
                 ["Fields", "5, from the minute to the day of week", "6 or 7: seconds first, an optional year last"],
-                ["Day of week", "0 to 7 or SUN to SAT. Sunday is 0 and 7, Monday is 1", "1 to 7 or SUN to SAT. In its examples, 1 is Sunday and 2 is Monday"],
+                ["Day of week", "0 to 7 or SUN to SAT. Sunday is 0 and 7, Monday is 1", "1 to 7 or SUN to SAT. Its examples use 2 for Monday and 6 for Friday, so 1 is Sunday"],
                 ["The two day fields", "A day matches if either field matches, unless one starts with *", "One of the two has to be ?"],
                 ["Extra symbols", "None", "? L W #"],
               ]}
