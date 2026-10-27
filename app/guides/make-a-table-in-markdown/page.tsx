@@ -153,7 +153,7 @@ export default function MakeATableInMarkdownGuidePage() {
               <li><strong className="text-[var(--fg)]">There is no blank line before the table.</strong> The preview still renders a table that directly follows a line of text, but the spec does not say what should happen, so leave a blank line before the table to be safe.</li>
             </ul>
             <h3 className={h3Class}>The Table button in the preview</h3>
-            <p>The <strong className="text-[var(--fg)]">Table</strong> button in the toolbar inserts a starter table with two columns and one row, right at the cursor. It does not add blank lines around it, so put the cursor on an empty line first. If you click it at the end of a line of text, the first line of the table is glued to that text and no table is rendered.</p>
+            <p>The <strong className="text-[var(--fg)]">Table</strong> button in the toolbar inserts a starter table with two columns and one row at the cursor. It adds a blank line before the table and after it where one is missing, so the table stays a table and the text around it stays text. In an empty editor it inserts just the table.</p>
           </section>
 
           <section>

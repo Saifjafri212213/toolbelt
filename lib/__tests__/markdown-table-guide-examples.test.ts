@@ -154,12 +154,6 @@ describe("table guide: why a table does not show up", () => {
     expect(html("Some text", "", ...table)).toContain("<table>");
   });
 
-  it("does not render a table when the Table button glues its first line to a line of text", () => {
-    const out = html("Intro line| Header | Header |", "| --- | --- |", "| Cell | Cell |");
-    expect(out).not.toContain("<table>");
-    expect(out).toContain("Intro line| Header | Header |");
-  });
-
   it("renders the starter table that the Table button inserts", () => {
     expect(cells(html("| Header | Header |", "| --- | --- |", "| Cell | Cell |"), "td")).toEqual(["Cell", "Cell"]);
   });

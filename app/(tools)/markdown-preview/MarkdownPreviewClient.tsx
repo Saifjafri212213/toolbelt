@@ -3,7 +3,7 @@
 import { useMemo, useRef, useState, useSyncExternalStore } from "react";
 import DOMPurify from "dompurify";
 import { CopyButton } from "@/components/shared/CopyButton";
-import { getMarkdownStats, insertMarkdown, renderMarkdown } from "@/lib/markdown-preview";
+import { getMarkdownStats, insertMarkdown, insertTableMarkdown, renderMarkdown } from "@/lib/markdown-preview";
 
 const starter = `# Hello, Markdown!\n\nWrite on the left and see **GitHub-flavored Markdown** rendered here.\n\n- [x] Live preview\n- [ ] Copy sanitized HTML\n\n| Feature | Status |\n| --- | --- |\n| Tables | Ready |\n| Code | \`const answer = 42\` |\n\n~~~ts\nconst greeting = "Hello, world!";\n~~~`;
 const subscribeToMountedState = () => () => {};
@@ -58,9 +58,7 @@ export function MarkdownPreviewClient() {
 
   function insertTable() {
     const input = textareaRef.current;
-    const position = input?.selectionStart ?? markdown.length;
-    const table = "| Header | Header |\n| --- | --- |\n| Cell | Cell |\n";
-    setMarkdown(markdown.slice(0, position) + table + markdown.slice(position));
+    setMarkdown(insertTableMarkdown(markdown, input?.selectionStart ?? markdown.length));
     requestAnimationFrame(() => input?.focus());
   }
 
