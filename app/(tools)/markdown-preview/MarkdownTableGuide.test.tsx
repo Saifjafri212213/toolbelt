@@ -67,6 +67,18 @@ describe("the Table button", () => {
     expect(input().value).toBe(`${starter}\nNext`);
   });
 
+  it("ends a line that only has spaces or a tab, so the table starts at the margin instead of becoming code", () => {
+    render(<MarkdownPreviewClient />);
+    type("A\n\n    ");
+    cursorAt(7);
+    clickTable();
+    expect(input().value).toBe(`A\n\n    \n${starter}`);
+    type("A\n\n\t");
+    cursorAt(4);
+    clickTable();
+    expect(input().value).toBe(`A\n\n\t\n${starter}`);
+  });
+
   it("adds nothing after the table when it is clicked at the end of the text", () => {
     render(<MarkdownPreviewClient />);
     type("Intro\n");

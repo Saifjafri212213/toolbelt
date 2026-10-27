@@ -36,10 +36,15 @@ export function insertTableMarkdown(markdown: string, position: number): string 
   const after = markdown.slice(at);
 
   const lineStart = before.lastIndexOf("\n") + 1;
+  const linePrefix = before.slice(lineStart);
   let lead = "";
-  if (before.slice(lineStart).trim() !== "") {
+  if (linePrefix.trim() !== "") {
     // Text comes before the cursor on this line: end the line and leave a blank one.
     lead = "\n\n";
+  } else if (linePrefix !== "") {
+    // Only white space comes before the cursor. That line is already blank, so end it: the table then
+    // starts at the left margin, where four spaces or a tab would have made it a code block.
+    lead = "\n";
   } else if (lineStart > 0 && !/(^|\n)[ \t]*\n$/.test(before.slice(0, lineStart))) {
     // The cursor is at the start of a line, and the line above it has text.
     lead = "\n";

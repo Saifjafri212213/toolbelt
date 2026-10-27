@@ -33,7 +33,14 @@ describe("insertTableMarkdown", () => {
     ["a text with a blank line above and nothing below", "A\n\n", 3, `A\n\n${starter}`],
     ["a first line that is empty", "\nA", 1, `\n${starter}\nA`],
     ["a line above that only has spaces", "A\n  \nB", 5, `A\n  \n${starter}\nB`],
-    ["an empty line the cursor sits on after some spaces", "A\n\n  ", 5, `A\n\n  ${starter}`],
+    // White space only before the cursor: that line is blank, so it is ended and the table starts at the
+    // margin. Four spaces or a tab in front of it would make the table a code block.
+    ["an empty line the cursor sits on after two spaces", "A\n\n  ", 5, `A\n\n  \n${starter}`],
+    ["an empty line the cursor sits on after four spaces", "A\n\n    ", 7, `A\n\n    \n${starter}`],
+    ["an empty line the cursor sits on after a tab", "A\n\n\t", 4, `A\n\n\t\n${starter}`],
+    ["the middle of the spaces on an empty line", "A\n\n    ", 5, `A\n\n  \n${starter}\n  `],
+    ["four spaces right under a line of text", "A\n    ", 6, `A\n    \n${starter}`],
+    ["a text that is only a tab", "\t", 1, `\t\n${starter}`],
   ])("in %s", (_name, markdown, position, expected) => {
     expect(insertTableMarkdown(markdown, position)).toBe(expected);
   });
@@ -56,6 +63,13 @@ describe("insertTableMarkdown", () => {
       "A",
       "A\nB",
       "A\n\n  ",
+      "A\n\n    ",
+      "A\n\n\t",
+      "A\n    \nB",
+      "A\n\t\nB",
+      "A\n    B",
+      "    ",
+      "\t",
       "A\n\nB",
       "Intro line\n",
       "\n",
