@@ -721,6 +721,78 @@ export const GUIDES: Guide[] = [
     relatedTools: ["cron-explainer"],
     sitemapPriority: 0.8,
   },
+  {
+    slug: "convert-camelcase-snake-case-kebab-case",
+    path: "/guides/convert-camelcase-snake-case-kebab-case",
+    title: "How to Convert Between camelCase, snake_case and kebab-case",
+    tagline: "Naming Conventions Guide",
+    cardDescription:
+      "See what camelCase, PascalCase, snake_case, CONSTANT_CASE and kebab-case look like, where each is used, and how to convert a name from one to another, acronyms and numbers included.",
+    tags: ["camelCase", "snake_case", "kebab-case", "Naming"],
+    accentVar: "--lime",
+    accentHex: "#A6F36B",
+    metaTitle: "How to Convert camelCase, snake_case and kebab-case",
+    metaDescription:
+      "What camelCase, PascalCase, snake_case, CONSTANT_CASE and kebab-case look like, where each is used, and how to convert between them, with acronyms and numbers.",
+    ogTitle: "How to Convert Between camelCase, snake_case and kebab-case - CODERCOPS Guides",
+    ogDescription:
+      "A practical guide to naming styles: what each looks like, where it is used, how a name is split into words, and what happens to acronyms and numbers.",
+    publishedAt: "2026-10-27",
+    updatedAt: "2026-10-27",
+    readingTime: "7 min read",
+    totalTime: "PT7M",
+    steps: [
+      {
+        name: "Enter the names, one per line",
+        text: "Paste or type one or more names. The Text Case Converter works through every line separately and ignores extra spaces around the words.",
+        url: "#step-1",
+      },
+      {
+        name: "Copy the style you need",
+        text: "The converter shows all ten styles at once, each with its own Copy button. Take camelCase for JavaScript variables, snake_case for Python, and kebab-case for URLs.",
+        url: "#step-2",
+      },
+      {
+        name: "Check acronyms and brand names",
+        text: "Every word is lowercased before the words are joined, so HTTPServerError becomes HttpServerError in PascalCase, and a name such as iPhone or OAuth2 is split at its capital letters. Fix these by hand.",
+        url: "#step-3",
+      },
+      {
+        name: "Follow your language's style guide",
+        text: "Check the naming rules of your language or team, such as PEP 8 for Python or the Google JavaScript Style Guide, and adjust the result where they differ.",
+        url: "#step-4",
+      },
+      {
+        name: "Use hyphens in URLs",
+        text: "Google recommends separating the words in a URL with hyphens instead of underscores, so use kebab-case there and keep the case of each URL consistent.",
+        url: "#step-5",
+      },
+    ],
+    faqs: [
+      {
+        q: "What is the difference between camelCase and PascalCase?",
+        a: "Both join the words with no separator and capitalize every new word. camelCase starts with a lowercase letter, as in userName, and PascalCase starts with an uppercase letter, as in UserName. The Google JavaScript Style Guide calls them lowerCamelCase and UpperCamelCase.",
+      },
+      {
+        q: "How do I convert camelCase to snake_case?",
+        a: "Split the name where a lowercase letter or a digit meets a capital letter, lowercase every word and join the words with underscores: getUserById becomes get_user_by_id. The Text Case Converter does this for every line you paste, and gives you the other styles at the same time.",
+      },
+      {
+        q: "Should I use hyphens or underscores in URLs?",
+        a: "Hyphens. Google recommends separating the words in a URL with hyphens instead of underscores, because a hyphen clearly signals a word boundary, so kebab-case is the style to use for the words in a URL path.",
+      },
+      {
+        q: "Why did the converter lowercase my acronym?",
+        a: "It lowercases every word before joining them, so XMLHttpRequest becomes xmlHttpRequest and HTTPServerError becomes HttpServerError. That matches the Google JavaScript Style Guide, which writes xmlHttpRequest and newCustomerId. PEP 8 asks for HTTPServerError in a Python class name, so change those by hand.",
+      },
+      {
+        q: "Is my text uploaded to a server?",
+        a: "No. All conversion runs in your browser. The text you paste never leaves your tab.",
+      },
+    ],
+    relatedTools: ["case-converter"],
+    sitemapPriority: 0.8,
+  },
 ];
 
 export function getGuide(slug: string): Guide | undefined {
