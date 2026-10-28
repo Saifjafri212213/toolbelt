@@ -11,7 +11,8 @@ export function buildJsonTreePath(segments: JsonPathSegment[]): string {
       return `${path}[${segment.index}]`;
     }
 
-    if (SIMPLE_PROPERTY.test(segment.key)) {
+    // A bare `$` after a dot is the root, not a property, so a key called `$` is quoted like the other special names.
+    if (SIMPLE_PROPERTY.test(segment.key) && segment.key !== "$") {
       return `${path}.${segment.key}`;
     }
 
