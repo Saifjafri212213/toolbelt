@@ -26,7 +26,7 @@ function compareUuidBytes(a: Uint8Array, b: Uint8Array): number {
 function InspectionResult({ result }: { result: UuidInspection }) {
   if (!result.ok) {
     return (
-      <p role="alert" className="rounded-xl border border-[var(--rose)]/30 bg-[var(--rose)]/5 p-3 text-sm text-[var(--rose)]">
+      <p role="alert" className="rounded-xl border border-tint-rose-30 bg-tint-rose-5 p-3 text-sm text-[var(--rose)]">
         Enter a valid UUID in hyphenated or compact format.
       </p>
     );
@@ -190,7 +190,7 @@ export function UuidGeneratorClient() {
         </div>
 
         {generationError && (
-          <p role="alert" className="rounded-xl border border-[var(--rose)]/30 bg-[var(--rose)]/5 p-3 text-sm text-[var(--rose)]">
+          <p role="alert" className="rounded-xl border border-tint-rose-30 bg-tint-rose-5 p-3 text-sm text-[var(--rose)]">
             {generationError}
           </p>
         )}

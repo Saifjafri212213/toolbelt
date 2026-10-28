@@ -165,7 +165,7 @@ export default function FormatAndValidateJsonGuidePage() {
                   className="relative p-6 rounded-lg border border-[var(--hairline)] bg-[var(--bg-raise)] scroll-mt-20"
                 >
                   <div className="flex items-center gap-3 mb-3">
-                    <span className="flex items-center justify-center w-7 h-7 rounded-full bg-[var(--cyan)]/10 border border-[var(--cyan)]/30 font-mono text-xs font-bold text-[var(--cyan)]">
+                    <span className="flex items-center justify-center w-7 h-7 rounded-full bg-tint-cyan-10 border border-tint-cyan-30 font-mono text-xs font-bold text-[var(--cyan)]">
                       {idx + 1}
                     </span>
                     <h3 className="font-display text-lg font-semibold text-[var(--fg)]">

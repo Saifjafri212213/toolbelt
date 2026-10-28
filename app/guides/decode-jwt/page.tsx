@@ -190,7 +190,7 @@ export default function DecodeJwtGuidePage() {
                   className="relative p-6 rounded-lg border border-[var(--hairline)] bg-[var(--bg-raise)] scroll-mt-20"
                 >
                   <div className="flex items-center gap-3 mb-3">
-                    <span className="flex items-center justify-center w-7 h-7 rounded-full bg-[var(--violet)]/10 border border-[var(--violet)]/30 font-mono text-xs font-bold text-[var(--violet)]">
+                    <span className="flex items-center justify-center w-7 h-7 rounded-full bg-tint-violet-10 border border-tint-violet-30 font-mono text-xs font-bold text-[var(--violet)]">
                       {idx + 1}
                     </span>
                     <h3 className="font-display text-lg font-semibold text-[var(--fg)]">
@@ -355,7 +355,7 @@ console.log(decode(payloadPart));`}
             </div>
           </section>
 
-          <section className="p-6 rounded-lg border border-[var(--amber)]/40 bg-[var(--bg-raise)]">
+          <section className="p-6 rounded-lg border border-tint-amber-40 bg-[var(--bg-raise)]">
             <div className="flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-wider text-[var(--amber)] mb-3">
               <ShieldAlert className="w-4 h-4" /> Decoding is not verification
             </div>

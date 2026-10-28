@@ -183,7 +183,7 @@ export function NumberBaseConverterClient() {
           <p
             id="nb-error"
             role="alert"
-            className="rounded-xl border border-[var(--rose)]/30 bg-[var(--rose)]/5 p-3 text-sm text-[var(--rose)]"
+            className="rounded-xl border border-tint-rose-30 bg-tint-rose-5 p-3 text-sm text-[var(--rose)]"
           >
             {error}
           </p>
@@ -267,7 +267,7 @@ export function NumberBaseConverterClient() {
             </select>
           </div>
           {twos && "error" in twos ? (
-            <p role="alert" className="rounded-xl border border-[var(--rose)]/30 bg-[var(--rose)]/5 p-3 text-sm text-[var(--rose)]">
+            <p role="alert" className="rounded-xl border border-tint-rose-30 bg-tint-rose-5 p-3 text-sm text-[var(--rose)]">
               {twos.error}
             </p>
           ) : (

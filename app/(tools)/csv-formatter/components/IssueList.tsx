@@ -10,7 +10,7 @@ export function IssueList({ issues }: { issues: CsvIssue[] }) {
     return (
       <p
         role="status"
-        className="flex items-center gap-2 rounded-xl border border-[var(--green)]/30 bg-[var(--green)]/5 p-3 text-sm text-[var(--green)]"
+        className="flex items-center gap-2 rounded-xl border border-tint-green-30 bg-tint-green-5 p-3 text-sm text-[var(--green)]"
       >
         <CheckCircle2 className="h-4 w-4 shrink-0" aria-hidden="true" />
         No problems found — every row matches the header.

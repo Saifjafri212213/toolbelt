@@ -94,7 +94,7 @@ export function TimestampConverterClient() {
             </div>
           </div>
           {!epochResult.ok ? (
-            <p role="alert" className="rounded-xl border border-[var(--rose)]/30 bg-[var(--rose)]/5 p-3 text-sm text-[var(--rose)]">{epochResult.error}</p>
+            <p role="alert" className="rounded-xl border border-tint-rose-30 bg-tint-rose-5 p-3 text-sm text-[var(--rose)]">{epochResult.error}</p>
           ) : (
             <div className="space-y-3">
               <p className="text-xs text-[var(--fg-muted)]">Interpreted as {UNIT_OPTIONS.find((option) => option.value === epochResult.unitUsed)?.label}</p>
@@ -115,7 +115,7 @@ export function TimestampConverterClient() {
           <label className="block text-sm font-medium text-[var(--fg)]" htmlFor="date-input">Date or ISO 8601</label>
           <input id="date-input" value={dateInput} onChange={(e) => setDateInput(e.target.value)} spellCheck={false} placeholder="2024-02-29T00:00:00Z" className="w-full rounded-xl border border-[var(--hairline)] bg-[var(--bg)] px-3 py-3 font-mono text-sm text-[var(--fg)] outline-none focus:border-[var(--green)]" />
           {!dateResult.ok ? (
-            <p role="alert" className="rounded-xl border border-[var(--rose)]/30 bg-[var(--rose)]/5 p-3 text-sm text-[var(--rose)]">{dateResult.error}</p>
+            <p role="alert" className="rounded-xl border border-tint-rose-30 bg-tint-rose-5 p-3 text-sm text-[var(--rose)]">{dateResult.error}</p>
           ) : (
             <div className="space-y-3">
               <Field label="Unix seconds" value={String(dateResult.seconds)} copyValue={String(dateResult.seconds)} />

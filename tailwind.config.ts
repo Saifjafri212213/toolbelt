@@ -1,5 +1,17 @@
 import type { Config } from "tailwindcss";
 
+// Tailwind 3 cannot put an opacity on a var() colour, so `border-[var(--rose)]/30` builds no CSS at all and the
+// box falls back to the default grey border with no tint. `border-tint-rose-30` and `bg-tint-rose-5` mix the
+// accent with transparent instead (the accent itself follows the theme). For another percentage, add it to TINT_STEPS.
+const TINT_ACCENTS = ["cyan", "amber", "rose", "violet", "sky", "lime", "green", "fuchsia"] as const;
+const TINT_STEPS = [5, 10, 30, 40] as const;
+const tint = Object.fromEntries(
+  TINT_ACCENTS.map((accent) => [
+    accent,
+    Object.fromEntries(TINT_STEPS.map((step) => [step, `color-mix(in srgb, var(--${accent}) ${step}%, transparent)`])),
+  ]),
+);
+
 const config: Config = {
   content: [
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
@@ -24,6 +36,7 @@ const config: Config = {
           100: "#DDE0EA",
           50: "#E8E6E1",
         },
+        tint,
         accent: {
           cyan: "#00E5C7",
           amber: "#FFB547",

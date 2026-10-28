@@ -100,7 +100,7 @@ export function RegexTesterClient() {
         </div>
 
         {!compiled.ok && (
-          <p role="alert" className="rounded-xl border border-[var(--rose)]/30 bg-[var(--rose)]/5 p-3 text-sm text-[var(--rose)]">
+          <p role="alert" className="rounded-xl border border-tint-rose-30 bg-tint-rose-5 p-3 text-sm text-[var(--rose)]">
             {compiled.error}
           </p>
         )}

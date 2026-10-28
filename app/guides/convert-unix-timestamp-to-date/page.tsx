@@ -195,7 +195,7 @@ export default function ConvertUnixTimestampToDateGuidePage() {
                   className="relative p-6 rounded-lg border border-[var(--hairline)] bg-[var(--bg-raise)] scroll-mt-20"
                 >
                   <div className="flex items-center gap-3 mb-3">
-                    <span className="flex items-center justify-center w-7 h-7 rounded-full bg-[var(--green)]/10 border border-[var(--green)]/30 font-mono text-xs font-bold text-[var(--green)]">
+                    <span className="flex items-center justify-center w-7 h-7 rounded-full bg-tint-green-10 border border-tint-green-30 font-mono text-xs font-bold text-[var(--green)]">
                       {idx + 1}
                     </span>
                     <h3 className="font-display text-lg font-semibold text-[var(--fg)]">
@@ -328,7 +328,7 @@ dt = epoch + timedelta(seconds=-86400)
           </section>
 
           {/* Section: Year 2038 */}
-          <section className="p-6 rounded-lg border border-[var(--amber)]/40 bg-[var(--bg-raise)]">
+          <section className="p-6 rounded-lg border border-tint-amber-40 bg-[var(--bg-raise)]">
             <div className="flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-wider text-[var(--amber)] mb-3">
               <AlertTriangle className="w-4 h-4" />
               Year 2038 limit

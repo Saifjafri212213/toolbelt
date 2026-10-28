@@ -281,7 +281,7 @@ const contrast = (a, b) => {
                   className="relative p-6 rounded-lg border border-[var(--hairline)] bg-[var(--bg-raise)] scroll-mt-20"
                 >
                   <div className="flex items-center gap-3 mb-3">
-                    <span className="flex items-center justify-center w-7 h-7 rounded-full bg-[var(--fuchsia)]/10 border border-[var(--fuchsia)]/30 font-mono text-xs font-bold text-[var(--fuchsia)]">
+                    <span className="flex items-center justify-center w-7 h-7 rounded-full bg-tint-fuchsia-10 border border-tint-fuchsia-30 font-mono text-xs font-bold text-[var(--fuchsia)]">
                       {idx + 1}
                     </span>
                     <h3 className="font-display text-lg font-semibold text-[var(--fg)]">

@@ -113,7 +113,7 @@ export function MarkdownPreviewClient() {
       <button type="button" className="btn" onClick={downloadHtml} disabled={!markdown}>Download HTML</button>
       <button type="button" className="btn" onClick={download} disabled={!markdown}>Download .md</button>
     </div>
-    {importError && <p role="alert" className="rounded-md border border-[var(--rose)]/30 bg-[var(--rose)]/5 px-3 py-2 text-[13px] text-[var(--rose)]">{importError}</p>}
+    {importError && <p role="alert" className="rounded-md border border-tint-rose-30 bg-tint-rose-5 px-3 py-2 text-[13px] text-[var(--rose)]">{importError}</p>}
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
       <div className="card overflow-hidden"><div className="px-3 py-2 border-b border-[var(--hairline)] bg-[var(--bg-raise)] font-mono text-[10.5px] tracking-[0.22em] uppercase text-[var(--fg-dim)]">Markdown</div><textarea ref={textareaRef} aria-label="Markdown input" value={markdown} onChange={(e) => setMarkdown(e.target.value)} spellCheck={false} className="editor-input p-4" style={{ minHeight: 520 }} /></div>
       <div className="card overflow-hidden" style={{ background: darkPreview ? "#17191f" : "#ffffff", color: darkPreview ? "#f4f4f5" : "#17191f" }}><div className="px-3 py-2 border-b border-black/10 font-mono text-[10.5px] tracking-[0.22em] uppercase opacity-60">Preview</div><article className="markdown-preview p-5 min-h-[520px] overflow-auto" dangerouslySetInnerHTML={{ __html: html }} /></div>
