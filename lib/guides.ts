@@ -865,6 +865,78 @@ export const GUIDES: Guide[] = [
     relatedTools: ["uuid-generator"],
     sitemapPriority: 0.8,
   },
+  {
+    slug: "validate-csv-file-fix-common-errors",
+    path: "/guides/validate-csv-file-fix-common-errors",
+    title: "How to Validate a CSV File and Fix Common Errors",
+    tagline: "Data Guide",
+    cardDescription:
+      "How a CSV file is put together, when a field needs quotes, which delimiter to use, how to fix a wrong number of columns or an unclosed quote, and how to turn a CSV into JSON, YAML or SQL.",
+    tags: ["CSV", "Validation", "RFC 4180", "JSON"],
+    accentVar: "--fuchsia",
+    accentHex: "#F26DF0",
+    metaTitle: "How to Validate a CSV File and Fix Common Errors",
+    metaDescription:
+      "How a CSV file is put together, when a field needs quotes, which delimiter to use, how to fix wrong column counts and unclosed quotes, and convert CSV to JSON.",
+    ogTitle: "How to Validate a CSV File and Fix Common Errors - CODERCOPS Guides",
+    ogDescription:
+      "A practical guide to CSV: records, fields and quotes, delimiters, the errors a validator reports and how to fix each one, and converting to JSON, YAML or SQL.",
+    publishedAt: "2026-10-28",
+    updatedAt: "2026-10-28",
+    readingTime: "9 min read",
+    totalTime: "PT9M",
+    steps: [
+      {
+        name: "Paste, upload or load the example",
+        text: "In the CSV/TSV Formatter & Validator, paste your CSV, upload a file of up to 10 MB, or press Load example. Nothing leaves your browser.",
+        url: "#step-1",
+      },
+      {
+        name: "Check the delimiter and the header row",
+        text: "The delimiter is detected on its own: comma, semicolon, tab or pipe. If the table is one wide column, pick the delimiter yourself. Turn off First row is the header if your file has no header, and the columns are named column_1, column_2 and so on.",
+        url: "#step-2",
+      },
+      {
+        name: "Read the validation list",
+        text: "Errors, such as a row with the wrong number of columns, an unclosed quote or a character after a closing quote, come with a line number. Warnings cover a byte-order mark, mixed line endings, blank lines and empty or duplicate header names.",
+        url: "#step-3",
+      },
+      {
+        name: "Fix the lines it points to",
+        text: "Quote any field that contains a comma, a double quote or a line break, double a quote that is part of the text, and close every quote you open. Then check that the error list is empty.",
+        url: "#step-4",
+      },
+      {
+        name: "Convert or copy the result",
+        text: "Switch between the Table, CSV, JSON, TypeScript, YAML, SQL and Aligned tabs, then copy the output or download it as a file.",
+        url: "#step-5",
+      },
+    ],
+    faqs: [
+      {
+        q: "Why does my CSV say a row has the wrong number of columns?",
+        a: "A row has more or fewer fields than the header. The usual cause is a value that contains a comma but is not wrapped in double quotes, so it is split in two. The validator reports it as, for example, Line 2 has 3 columns but the header has 2. Put the value in double quotes and the row has the right count again.",
+      },
+      {
+        q: "When does a CSV field need double quotes?",
+        a: "RFC 4180 says fields containing line breaks, double quotes and commas should be enclosed in double quotes, and that a double quote inside a quoted field is written as two double quotes. For example, Said \"hello\" is written as \"Said \"\"hello\"\"\".",
+      },
+      {
+        q: "Why does my CSV use semicolons instead of commas?",
+        a: "RFC 4180 describes commas only, but spreadsheets let the delimiter change. Microsoft says Excel's default list separator is a comma, that you can change it in the Windows Region settings, and that setting a comma as the decimal separator forces Excel to use a semicolon for the list separator. The validator detects a semicolon, tab or pipe on its own.",
+      },
+      {
+        q: "How do I convert a CSV file to JSON?",
+        a: "Paste the CSV into the CSV/TSV Formatter & Validator and open the JSON tab. You get an array of objects, one per row, keyed by the header names. Every value stays a string, because a CSV file holds only text, so 007 stays \"007\".",
+      },
+      {
+        q: "Is my CSV file uploaded to a server?",
+        a: "No. The file is read and parsed in your browser, and nothing you paste or upload is sent anywhere. Uploads are limited to 10 MB.",
+      },
+    ],
+    relatedTools: ["csv-formatter"],
+    sitemapPriority: 0.8,
+  },
 ];
 
 export function getGuide(slug: string): Guide | undefined {
