@@ -793,6 +793,78 @@ export const GUIDES: Guide[] = [
     relatedTools: ["case-converter"],
     sitemapPriority: 0.8,
   },
+  {
+    slug: "uuid-v4-vs-v7-generate-uuid",
+    path: "/guides/uuid-v4-vs-v7-generate-uuid",
+    title: "UUID v4 vs v7, and How to Generate a UUID",
+    tagline: "Identifiers Guide",
+    cardDescription:
+      "What a UUID is and how it is written, how version 4 (random) differs from version 7 (time ordered), when to pick each, and how to generate and inspect UUIDs in your browser.",
+    tags: ["UUID", "UUID v4", "UUID v7", "RFC 9562"],
+    accentVar: "--amber",
+    accentHex: "#FFB547",
+    metaTitle: "UUID v4 vs v7 and How to Generate a UUID",
+    metaDescription:
+      "What a UUID is, how v4 (random) and v7 (time ordered) differ, where the version and variant sit, the nil and max UUIDs, collision odds, and how to generate one.",
+    ogTitle: "UUID v4 vs v7, and How to Generate a UUID - CODERCOPS Guides",
+    ogDescription:
+      "A practical guide to UUIDs: the 8-4-4-4-12 layout, version and variant bits, v4 against v7, the nil and max UUIDs, and how likely a collision is.",
+    publishedAt: "2026-10-28",
+    updatedAt: "2026-10-28",
+    readingTime: "8 min read",
+    totalTime: "PT8M",
+    steps: [
+      {
+        name: "Choose version 4 or version 7",
+        text: "In the UUID Generator & Inspector, pick UUID v4 for 122 random bits and nothing else, or UUID v7 for a UUID that starts with the Unix time in milliseconds and so sorts by creation time.",
+        url: "#step-1",
+      },
+      {
+        name: "Set the quantity",
+        text: "Enter a quantity from 1 to 100. The random bits come from crypto.getRandomValues in your browser.",
+        url: "#step-2",
+      },
+      {
+        name: "Pick the format and generate",
+        text: "Tick Uppercase or No hyphens if you need them, then press Generate UUIDs. A version 7 batch is sorted so the list comes out in ascending order.",
+        url: "#step-3",
+      },
+      {
+        name: "Copy one UUID or the whole list",
+        text: "Each UUID has its own copy button, and Copy all copies the list with one UUID per line.",
+        url: "#step-4",
+      },
+      {
+        name: "Inspect a UUID you already have",
+        text: "Paste a UUID, with or without hyphens and in any case, into the inspector to see its version, its variant, whether it is the nil or max UUID, and for version 7 the timestamp in milliseconds and as an ISO date.",
+        url: "#step-5",
+      },
+    ],
+    faqs: [
+      {
+        q: "What is the difference between UUID v4 and v7?",
+        a: "A version 4 UUID is 122 random bits plus the version and variant bits. A version 7 UUID starts with a 48-bit Unix timestamp in milliseconds, so UUIDs made later sort later, and the bits after the timestamp are random apart from the version and variant.",
+      },
+      {
+        q: "Should I use UUID v4 or v7?",
+        a: "Use v7 when you want identifiers that sort by creation time, such as database keys, and v4 when you only need a unique value and do not want it to carry a time. RFC 9562 recommends v7 over the older time-based v1 and v6 where there is no legacy need for them.",
+      },
+      {
+        q: "How do I generate a UUID?",
+        a: "Open the UUID Generator & Inspector, choose UUID v4 or UUID v7, set a quantity from 1 to 100 and press Generate UUIDs. Everything runs in your browser and the random bits come from crypto.getRandomValues.",
+      },
+      {
+        q: "Can two UUIDs be the same?",
+        a: "In theory yes, but with 122 random bits a version 4 collision is very unlikely: by the standard birthday approximation you would need to generate about 103 trillion UUIDs for a one in a billion chance of a single duplicate. RFC 9562 gives no collision figure, and it says true global uniqueness cannot be guaranteed.",
+      },
+      {
+        q: "Is a UUID safe to use as a secret token?",
+        a: "No. RFC 9562 says implementations should not assume UUIDs are hard to guess, and that UUIDs must not be used as security capabilities, meaning identifiers that grant access just by being possessed.",
+      },
+    ],
+    relatedTools: ["uuid-generator"],
+    sitemapPriority: 0.8,
+  },
 ];
 
 export function getGuide(slug: string): Guide | undefined {
