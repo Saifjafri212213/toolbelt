@@ -182,7 +182,7 @@ export default function UuidGuidePage() {
           <section>
             <h2 className={h2Class}>How likely is a UUID collision?</h2>
             <p>
-              RFC 9562 gives no collision figure. It says UUIDs have enough entropy to make a collision unlikely, and also that true global uniqueness cannot be guaranteed. You can work out the odds for version 4 yourself with the usual birthday approximation: with 122 random bits you would need to generate about <strong className="text-[var(--fg)]">2.7 quintillion</strong> (2.7 × 10<sup>18</sup>) UUIDs for a 50% chance of one duplicate, and about <strong className="text-[var(--fg)]">103 trillion</strong> (1.03 × 10<sup>14</sup>) for a one in a billion chance. That assumes the random bits are really random, which is why the generator uses <C>crypto.getRandomValues</C>.
+              RFC 9562 gives no collision figure. It says implementations should use a cryptographically secure random number generator so that values have a low likelihood of collision, and also that true global uniqueness cannot be guaranteed. You can work out the odds for version 4 yourself with the usual birthday approximation: with 122 random bits you would need to generate about <strong className="text-[var(--fg)]">2.7 quintillion</strong> (2.7 × 10<sup>18</sup>) UUIDs for a 50% chance of one duplicate, and about <strong className="text-[var(--fg)]">103 trillion</strong> (1.03 × 10<sup>14</sup>) for a one in a billion chance. That assumes the random bits are really random, which is why the generator uses <C>crypto.getRandomValues</C>.
             </p>
             <p className="mt-4">
               For version 7, a collision needs the same millisecond <em>and</em> the same 74 random bits.
