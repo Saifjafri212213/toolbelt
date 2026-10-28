@@ -160,13 +160,13 @@ describe("csv guide: errors", () => {
 
 describe("csv guide: warnings", () => {
   it("warns about and removes a byte-order mark", () => {
-    const parsed = parseCsv("﻿name,city\nAda,London");
+    const parsed = parseCsv("\uFEFFname,city\nAda,London");
     expect(parsed.header).toEqual(["name", "city"]);
     expect(parsed.warnings.map((issue) => issue.message)).toEqual([
       "A UTF-8 byte-order mark was found and removed.",
     ]);
-    expect("﻿".codePointAt(0)).toBe(0xfeff);
-    expect([...new TextEncoder().encode("﻿")]).toEqual([0xef, 0xbb, 0xbf]);
+    expect("\uFEFF".codePointAt(0)).toBe(0xfeff);
+    expect([...new TextEncoder().encode("\uFEFF")]).toEqual([0xef, 0xbb, 0xbf]);
   });
 
   it("warns about mixed line endings and writes the first ending back", () => {
@@ -215,7 +215,7 @@ describe("csv guide: warnings", () => {
   });
 
   it("puts whole-file warnings on line 1", () => {
-    expect(parseCsv("﻿name,city\nAda,London").warnings[0].line).toBe(1);
+    expect(parseCsv("\uFEFFname,city\nAda,London").warnings[0].line).toBe(1);
     expect(parseCsv("name,city\n\nAda,London").warnings[0].line).toBe(1);
   });
 });
