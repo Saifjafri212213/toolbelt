@@ -645,8 +645,23 @@ function escapeXml(s: string): string {
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
+    .replace(/"/g, "&quot;")
+    // A parser turns a raw CR or CRLF into LF, but it keeps a character reference.
+    .replace(/\r/g, "&#13;");
 }
+
+// XML 1.0 has no way to hold these, not even as a character reference (&#7; is
+// rejected too): U+0000-U+0008, U+000B, U+000C, U+000E-U+001F, U+FFFE and U+FFFF.
+// Tab, LF and CR are allowed, and astral characters are surrogate pairs here,
+// which none of these ranges touch.
+const XML_FORBIDDEN_CHAR = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\uFFFE\uFFFF]/;
+
+function forbiddenXmlChar(s: string): string | null {
+  const m = XML_FORBIDDEN_CHAR.exec(s);
+  return m ? `U+${m[0].charCodeAt(0).toString(16).toUpperCase().padStart(4, "0")}` : null;
+}
+
+class XmlCharError extends Error {}
 function sanitizeTag(s: string): string {
   if (!s) return "item";
   const cleaned = s.replace(/[^A-Za-z0-9_.-]/g, "_");
@@ -657,11 +672,13 @@ export function toXML(raw: string, rootTag = "root"): Result<string> {
   const v = validate(raw);
   if (!v.ok) return v;
   const parsed = llParse(raw);
+  // `path` is the JSON path of the node (undefined at the top), used in errors.
   function render(
     node: unknown,
     tag: string,
     indent: number,
     parent: "root" | "object" | "array" = "root",
+    path?: string,
   ): string {
     const pad = "  ".repeat(indent);
     if (node === null) return `${pad}<${tag} nil="true"/>`;
@@ -673,11 +690,11 @@ export function toXML(raw: string, rootTag = "root"): Result<string> {
       if (node.length === 0) return `${pad}<${tag}/>`;
       if (parent === "object") {
         return node
-          .map((item) => render(item, itemTag, indent, "array"))
+          .map((item, i) => render(item, itemTag, indent, "array", `${path ?? ""}[${i}]`))
           .join("\n");
       }
       const inner = node
-        .map((item) => render(item, itemTag, indent + 1, "array"))
+        .map((item, i) => render(item, itemTag, indent + 1, "array", `${path ?? ""}[${i}]`))
         .join("\n");
       return `${pad}<${tag}>\n${inner}\n${pad}</${tag}>`;
     }
@@ -685,14 +702,30 @@ export function toXML(raw: string, rootTag = "root"): Result<string> {
       const entries = Object.entries(node as Record<string, unknown>);
       if (entries.length === 0) return `${pad}<${tag}/>`;
       const inner = entries
-        .map(([k, v]) => render(v, sanitizeTag(k), indent + 1, "object"))
+        .map(([k, v]) => render(v, sanitizeTag(k), indent + 1, "object", path === undefined ? k : `${path}.${k}`))
         .join("\n");
       return `${pad}<${tag}>\n${inner}\n${pad}</${tag}>`;
     }
-    return `${pad}<${tag}>${escapeXml(String(node))}</${tag}>`;
+    const text = String(node);
+    const bad = forbiddenXmlChar(text);
+    if (bad) {
+      const where = path === undefined ? "the top-level string" : `the string at ${JSON.stringify(path)}`;
+      throw new XmlCharError(
+        `Cannot convert to XML: ${where} contains ${bad}, which XML 1.0 cannot hold, not even as a character reference. Remove it, or use another format.`,
+      );
+    }
+    return `${pad}<${tag}>${escapeXml(text)}</${tag}>`;
   }
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n${render(parsed, sanitizeTag(rootTag), 0)}`;
-  return { ok: true, value: xml };
+  let body: string;
+  try {
+    body = render(parsed, sanitizeTag(rootTag), 0);
+  } catch (e) {
+    if (e instanceof XmlCharError) {
+      return { ok: false, error: { message: e.message, line: 1, column: 1, position: 0 } };
+    }
+    throw e;
+  }
+  return { ok: true, value: `<?xml version="1.0" encoding="UTF-8"?>\n${body}` };
 }
 
 /* ------- JSON -> Query string ------- */

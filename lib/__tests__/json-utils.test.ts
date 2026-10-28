@@ -340,6 +340,91 @@ describe("toXML", () => {
 
     expect(result.value).toContain("  <my_tag>a</my_tag>\n  <my_tag>b</my_tag>");
   });
+
+  describe("characters XML 1.0 cannot hold", () => {
+    const xmlOf = (value: unknown) => toXML(JSON.stringify(value));
+
+    it("writes a carriage return as &#13; so a parser reads it back unchanged", () => {
+      const crlf = xmlOf({ note: "a\r\nb" });
+      expect(crlf.ok && crlf.value).toContain("<note>a&#13;\nb</note>");
+      const cr = xmlOf({ note: "a\rb" });
+      expect(cr.ok && cr.value).toContain("<note>a&#13;b</note>");
+    });
+
+    it("keeps tabs and line feeds as they are", () => {
+      const result = xmlOf({ note: "a\tb\nc" });
+      expect(result.ok && result.value).toContain("<note>a\tb\nc</note>");
+    });
+
+    it.each([
+      ["NUL", "\u0000", "U+0000"],
+      ["U+0008", "\u0008", "U+0008"],
+      ["BEL", "\u0007", "U+0007"],
+      ["vertical tab", "\u000b", "U+000B"],
+      ["form feed", "\u000c", "U+000C"],
+      ["U+000E", "\u000e", "U+000E"],
+      ["ESC", "\u001b", "U+001B"],
+      ["U+001F", "\u001f", "U+001F"],
+      ["U+FFFE", "\ufffe", "U+FFFE"],
+      ["U+FFFF", "\uffff", "U+FFFF"],
+    ])("gives an error naming %s and its key instead of XML that will not parse", (_name, char, code) => {
+      const result = xmlOf({ log: `red${char}text` });
+      expect(result.ok).toBe(false);
+      if (result.ok) return;
+      expect(result.error.message).toContain(code);
+      expect(result.error.message).toContain('"log"');
+    });
+
+    it("names the path of a value that is nested in objects and arrays", () => {
+      const result = xmlOf({ users: [{ name: "Ada" }, { log: "\u001b[31mred" }] });
+      expect(result.ok).toBe(false);
+      if (result.ok) return;
+      expect(result.error.message).toContain("U+001B");
+      expect(result.error.message).toContain('"users[1].log"');
+    });
+
+    it("reports a bad value at the top level and in an array of strings", () => {
+      const top = toXML(JSON.stringify("a\u0000b"));
+      expect(top.ok).toBe(false);
+      if (!top.ok) expect(top.error.message).toContain("U+0000");
+      const list = xmlOf({ tags: ["ok", "b\u0007d"] });
+      expect(list.ok).toBe(false);
+      if (!list.ok) expect(list.error.message).toContain('"tags[1]"');
+    });
+
+    it("reports the first bad value it meets", () => {
+      const result = xmlOf({ a: "\u0001", b: "\u0002" });
+      expect(result.ok).toBe(false);
+      if (!result.ok) {
+        expect(result.error.message).toContain("U+0001");
+        expect(result.error.message).not.toContain("U+0002");
+      }
+    });
+
+    it("converts every character XML 1.0 does allow", () => {
+      const allowed = "\u0009\u000a\u000d\u0020\u007f\u0080\u009f\ud7ff\ue000\ufffd\u{10000}\u{1f600}\u{10ffff}";
+      const result = xmlOf({ ok: allowed });
+      expect(result.ok).toBe(true);
+    });
+
+    it("rejects exactly the characters outside the XML 1.0 Char production, across the whole BMP", () => {
+      // Char ::= #x9 | #xA | #xD | [#x20-#xD7FF] | [#xE000-#xFFFD] | [#x10000-#x10FFFF]
+      const allowedInXml = (cp: number) =>
+        cp === 0x9 || cp === 0xa || cp === 0xd || (cp >= 0x20 && cp <= 0xd7ff) || (cp >= 0xe000 && cp <= 0xfffd);
+      const wrong: string[] = [];
+      for (let cp = 0; cp <= 0xffff; cp++) {
+        if (cp >= 0xd800 && cp <= 0xdfff) continue; // lone surrogates are not valid JSON text to inspect here
+        const ok = xmlOf({ v: `x${String.fromCharCode(cp)}y` }).ok;
+        if (ok !== allowedInXml(cp)) wrong.push(`U+${cp.toString(16).toUpperCase().padStart(4, "0")}`);
+      }
+      expect(wrong).toEqual([]);
+    });
+
+    it("does not reject a bad character in a key, because keys are rewritten to safe tag names", () => {
+      const result = xmlOf({ "a\u0007b": 1 });
+      expect(result.ok && result.value).toContain("<a_b>1</a_b>");
+    });
+  });
 });
 
 describe("toYAML writes numbers with an exponent as YAML 1.1 floats", () => {
